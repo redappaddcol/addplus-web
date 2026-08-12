@@ -23,7 +23,7 @@ export default async function Navbar() {
           Add <span className="text-orange-500">+</span>
         </Link>
         <nav className="flex items-center gap-4 text-sm">
-          <Link href="/" className="text-neutral-700 hover:text-orange-600">
+          <Link href="/causas" className="text-neutral-700 hover:text-orange-600">
             Causas
           </Link>
           {user ? (
