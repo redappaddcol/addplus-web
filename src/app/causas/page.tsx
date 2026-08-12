@@ -16,7 +16,7 @@ export default async function CausasPage({
 
   let query = supabase
     .from("causes")
-    .select("id, titulo, descripcion, ciudad, estado, tiene_meta_economica, voluntarios_requeridos, categories(nombre)")
+    .select("id, titulo, descripcion, ciudad, estado, tiene_meta_economica, voluntarios_requeridos, imagen_url, categories(nombre), applications(estado)")
     .order("creado_en", { ascending: false });
 
   if (categoria) {
@@ -27,9 +27,9 @@ export default async function CausasPage({
 
   return (
     <div>
-      <div className="mb-8 rounded-xl bg-gradient-to-r from-orange-600 to-red-600 p-8 text-white">
+      <div className="mb-8 rounded-xl bg-gradient-to-r from-[#40573F] to-[#2E3A29] p-8 text-white">
         <h1 className="text-2xl font-bold">Causas que necesitan voluntarios</h1>
-        <p className="mt-2 max-w-2xl text-orange-50">
+        <p className="mt-2 max-w-2xl text-[#D8DDD2]">
           Descubre iniciativas creadas por gestores de causas, súmate como voluntario y ayuda a
           convertir causas &quot;perdidas&quot; en causas posibles.
         </p>
@@ -39,7 +39,7 @@ export default async function CausasPage({
         <a
           href="/causas"
           className={`rounded-full border px-3 py-1 text-sm ${
-            !categoria ? "border-orange-600 bg-orange-600 text-white" : "border-neutral-300 text-neutral-700"
+            !categoria ? "border-[#40573F] bg-[#40573F] text-white" : "border-[#CFC9B8] text-[#4A4A42]"
           }`}
         >
           Todas
@@ -50,8 +50,8 @@ export default async function CausasPage({
             href={`/causas?categoria=${c.id}`}
             className={`rounded-full border px-3 py-1 text-sm ${
               categoria === String(c.id)
-                ? "border-orange-600 bg-orange-600 text-white"
-                : "border-neutral-300 text-neutral-700"
+                ? "border-[#40573F] bg-[#40573F] text-white"
+                : "border-[#CFC9B8] text-[#4A4A42]"
             }`}
           >
             {c.nombre}
