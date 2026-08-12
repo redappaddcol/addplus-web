@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Salvavidas from "@/components/Salvavidas";
 
 type Cause = {
   id: string;
@@ -8,40 +9,74 @@ type Cause = {
   estado: string;
   tiene_meta_economica: boolean;
   voluntarios_requeridos: number;
+  imagen_url?: string | null;
   categories: { nombre: string } | null;
+  applications?: { estado: string }[];
 };
 
-const estadoColor: Record<string, string> = {
-  activa: "bg-emerald-100 text-emerald-700",
-  en_curso: "bg-blue-100 text-blue-700",
-  cerrada: "bg-neutral-200 text-neutral-600",
-};
+const imagenesPorDefecto = [
+  "https://images.unsplash.com/photo-1559027615-cd4628902d4a?auto=format&fit=crop&w=800&q=70",
+  "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=70",
+  "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=70",
+];
+
+function hashIndice(id: string, total: number) {
+  let suma = 0;
+  for (let i = 0; i < id.length; i++) suma += id.charCodeAt(i);
+  return suma % total;
+}
 
 export default function CauseCard({ cause }: { cause: Cause }) {
+  const aceptados = (cause.applications ?? []).filter((a) => a.estado === "aceptada").length;
+  const requeridos = Math.max(1, cause.voluntarios_requeridos);
+  const progreso = cause.estado === "cerrada" ? 100 : (aceptados / requeridos) * 100;
+  const imagen =
+    cause.imagen_url || imagenesPorDefecto[hashIndice(cause.id, imagenesPorDefecto.length)];
+
   return (
     <Link
       href={`/causas/${cause.id}`}
-      className="block rounded-lg border border-neutral-200 bg-white p-4 shadow-sm transition hover:shadow-md"
+      className="flex flex-col overflow-hidden rounded-2xl border border-[#E3DFD2] bg-white transition hover:border-[#CFC9B8] hover:shadow-sm"
     >
-      <div className="mb-2 flex items-center justify-between">
-        <span className="text-xs font-medium uppercase tracking-wide text-orange-600">
+      <div className="relative h-36 w-full overflow-hidden bg-[#EDEADF]">
+        <img src={imagen} alt="" className="h-full w-full object-cover" />
+        {cause.tiene_meta_economica && (
+          <span className="absolute right-2 top-2 rounded-full bg-[#E07A4F] px-2.5 py-1 text-[11px] font-medium text-white">
+            Con aporte
+          </span>
+        )}
+      </div>
+
+      <div className="flex flex-1 flex-col p-4">
+        <span className="text-[11px] font-medium uppercase tracking-wider text-[#7B8B6F]">
           {cause.categories?.nombre ?? "General"}
         </span>
-        <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${estadoColor[cause.estado]}`}>
-          {cause.estado.replace("_", " ")}
-        </span>
+        <h3 className="mt-1 text-base font-semibold leading-snug text-[#2B2B26]">{cause.titulo}</h3>
+
+        <div className="mt-3 flex items-start justify-between gap-3">
+          <p className="line-clamp-3 flex-1 text-xs leading-relaxed text-[#6B6B60]">
+            {cause.descripcion}
+          </p>
+          <Salvavidas progreso={progreso} />
+        </div>
+
+        <div className="mt-4 grid grid-cols-3 gap-2 border-t border-[#EDEADF] pt-3 text-center">
+          <div>
+            <p className="text-sm font-semibold text-[#2B2B26]">{aceptados}</p>
+            <p className="text-[10px] uppercase tracking-wider text-[#9A9A8E]">Voluntarios</p>
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-[#2B2B26]">{requeridos}</p>
+            <p className="text-[10px] uppercase tracking-wider text-[#9A9A8E]">Meta</p>
+          </div>
+          <div>
+            <p className="truncate text-sm font-semibold text-[#2B2B26]">
+              {cause.ciudad || "—"}
+            </p>
+            <p className="text-[10px] uppercase tracking-wider text-[#9A9A8E]">Ciudad</p>
+          </div>
+        </div>
       </div>
-      <h3 className="text-lg font-semibold">{cause.titulo}</h3>
-      <p className="mt-1 line-clamp-2 text-sm text-neutral-600">{cause.descripcion}</p>
-      <div className="mt-3 flex items-center justify-between text-xs text-neutral-500">
-        <span>{cause.ciudad || "Sin ciudad"}</span>
-        <span>{cause.voluntarios_requeridos} voluntarios</span>
-      </div>
-      {cause.tiene_meta_economica && (
-        <span className="mt-2 inline-block rounded bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">
-          Con aporte económico
-        </span>
-      )}
     </Link>
   );
 }

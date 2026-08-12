@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/lib/actions";
+import Logo from "@/components/Logo";
 
 export default async function Navbar() {
   const supabase = await createClient();
@@ -17,49 +18,60 @@ export default async function Navbar() {
   }
 
   return (
-    <header className="border-b border-neutral-200 bg-white">
-      <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
-        <Link href="/" className="text-xl font-bold text-orange-600">
-          Add <span className="text-orange-500">+</span>
+    <header className="sticky top-0 z-50 border-b border-[#E3DFD2] bg-[#F7F5EE]/95 backdrop-blur">
+      <div className="mx-auto flex max-w-6xl items-center gap-8 px-5 py-3">
+        <Link href="/" className="flex items-center gap-2.5">
+          <Logo className="h-9 w-9 text-[#40573F]" />
+          <span className="text-xl font-semibold tracking-tight text-[#2B2B26]">
+            ADD<span className="text-[#40573F]">+</span>
+          </span>
         </Link>
-        <nav className="flex items-center gap-4 text-sm">
-          <Link href="/causas" className="text-neutral-700 hover:text-orange-600">
-            Causas
-          </Link>
+
+        <nav className="hidden items-center gap-6 text-sm text-[#4A4A42] md:flex">
+          <Link href="/causas" className="transition hover:text-[#40573F]">Causas</Link>
+          <Link href="/#colaborar" className="transition hover:text-[#40573F]">Colaborar</Link>
+          <Link href="/#expertos" className="transition hover:text-[#40573F]">Expertos</Link>
+          <Link href="/#nosotros" className="transition hover:text-[#40573F]">Nosotros</Link>
+        </nav>
+
+        <div className="ml-auto flex items-center gap-2.5 text-sm">
           {user ? (
             <>
               {perfil?.rol === "gestor" && (
-                <Link href="/causas/nueva" className="text-neutral-700 hover:text-orange-600">
+                <Link href="/causas/nueva" className="hidden text-[#4A4A42] transition hover:text-[#40573F] sm:block">
                   Crear causa
                 </Link>
               )}
-              <Link href="/dashboard" className="text-neutral-700 hover:text-orange-600">
+              <Link href="/dashboard" className="hidden text-[#4A4A42] transition hover:text-[#40573F] sm:block">
                 Mi panel
               </Link>
-              <Link href="/mis-postulaciones" className="text-neutral-700 hover:text-orange-600">
+              <Link href="/mis-postulaciones" className="hidden text-[#4A4A42] transition hover:text-[#40573F] lg:block">
                 Mis postulaciones
               </Link>
-              <span className="text-neutral-400">{perfil?.nombre}</span>
+              <span className="hidden text-[#9A9A8E] lg:block">{perfil?.nombre}</span>
               <form action={signOut}>
-                <button className="rounded bg-neutral-800 px-3 py-1.5 text-white hover:bg-neutral-700">
+                <button className="rounded-full border border-[#CFC9B8] px-4 py-2 text-[#4A4A42] transition hover:bg-[#EDEADF]">
                   Salir
                 </button>
               </form>
             </>
           ) : (
             <>
-              <Link href="/login" className="text-neutral-700 hover:text-orange-600">
-                Ingresar
+              <Link
+                href="/login"
+                className="rounded-full border border-[#CFC9B8] px-4 py-2 text-[#4A4A42] transition hover:bg-[#EDEADF]"
+              >
+                Iniciar sesión
               </Link>
               <Link
                 href="/registro"
-                className="rounded bg-orange-600 px-3 py-1.5 text-white hover:bg-orange-700"
+                className="rounded-full bg-[#40573F] px-5 py-2 font-medium text-[#F7F5EE] transition hover:bg-[#33472F]"
               >
-                Registrarme
+                Regístrate
               </Link>
             </>
           )}
-        </nav>
+        </div>
       </div>
     </header>
   );
