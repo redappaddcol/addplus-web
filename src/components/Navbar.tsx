@@ -31,7 +31,8 @@ export default async function Navbar() {
           <Link href="/causas" className="transition hover:text-[#40573F]">Causas</Link>
           <Link href="/eventos" className="transition hover:text-[#40573F]">Eventos</Link>
           <Link href="/#colaborar" className="transition hover:text-[#40573F]">Colaborar</Link>
-          <Link href="/#expertos" className="transition hover:text-[#40573F]">Expertos</Link>
+          <Link href="/expertos" className="transition hover:text-[#40573F]">Expertos</Link>
+          <Link href="/aliados" className="transition hover:text-[#40573F]">Aliados</Link>
           <Link href="/#nosotros" className="transition hover:text-[#40573F]">Nosotros</Link>
         </nav>
 
