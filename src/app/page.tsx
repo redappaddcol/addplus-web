@@ -109,7 +109,7 @@ export default async function LandingPage() {
       </section>
 
       <section className="relative z-10 mx-auto -mt-28 max-w-6xl px-5">
-        <div className="grid gap-5 lg:grid-cols-[1fr_260px]">
+        <div>
           <div className="rounded-2xl border border-[#E3DFD2] bg-white p-6 shadow-sm">
             <div className="mb-5 flex items-end justify-between">
               <h2 className="text-xl font-semibold">Causas en progreso</h2>
@@ -141,48 +141,46 @@ export default async function LandingPage() {
             )}
           </div>
 
-          <aside id="expertos" className="scroll-mt-24 space-y-4">
-            <p className="text-sm font-medium text-[#4A4A42]">¿Eres experto o aliado?</p>
-            <div className="rounded-2xl border border-[#E3DFD2] bg-white p-4">
-              <div className="h-24 overflow-hidden rounded-xl bg-[#EDEADF]">
-                <img
-                  src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=500&q=70"
-                  alt=""
-                  className="h-full w-full object-cover"
-                />
-              </div>
-              <p className="mt-3 text-sm font-semibold">Panel de expertos</p>
-              <p className="mt-1 text-xs leading-relaxed text-[#6B6B60]">
-                Valida causas con criterio técnico o académico y ayuda a llevarlas a buen puerto.
-              </p>
-              <Link
-                href="/registro"
-                className="mt-3 block rounded-full bg-[#40573F] py-2 text-center text-xs font-medium text-[#F7F5EE] transition hover:bg-[#33472F]"
-              >
-                Regístrate
-              </Link>
-            </div>
-            <div className="rounded-2xl border border-[#E3DFD2] bg-white p-4">
-              <div className="h-24 overflow-hidden rounded-xl bg-[#EDEADF]">
-                <img
-                  src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=500&q=70"
-                  alt=""
-                  className="h-full w-full object-cover"
-                />
-              </div>
-              <p className="mt-3 text-sm font-semibold">Entidades aliadas</p>
-              <p className="mt-1 text-xs leading-relaxed text-[#6B6B60]">
-                Súmate de forma visible con tu marca, o de forma invisible si tu interés es
-                puramente social.
-              </p>
-              <Link
-                href="/registro"
-                className="mt-3 block rounded-full border border-[#CFC9B8] py-2 text-center text-xs font-medium text-[#4A4A42] transition hover:bg-[#EDEADF]"
-              >
-                Quiero aliarme
-              </Link>
-            </div>
-          </aside>
+        </div>
+      </section>
+
+
+      <section className="mx-auto mt-20 max-w-6xl px-5">
+        <div className="grid gap-5 md:grid-cols-2">
+          <div className="flex flex-col rounded-2xl border border-[#E3DFD2] bg-white p-7">
+            <p className="text-xs font-medium uppercase tracking-wide text-[#9A9A8E]">
+              Para expertos
+            </p>
+            <h3 className="mt-2 text-xl font-semibold text-[#2B2B26]">Panel de expertos</h3>
+            <p className="mt-3 flex-1 text-sm leading-relaxed text-[#6B6B60]">
+              Una causa sin criterio técnico se queda en buena intención. El panel valida
+              diagnósticos, aterriza los diseños y revisa que el plan de acción sea viable.
+            </p>
+            <Link
+              href="/expertos"
+              className="mt-6 inline-block self-start rounded-full bg-[#40573F] px-6 py-2.5 text-sm font-medium text-[#F7F5EE] transition hover:bg-[#33472F]"
+            >
+              Conocer el panel
+            </Link>
+          </div>
+
+          <div className="flex flex-col rounded-2xl border border-[#E3DFD2] bg-white p-7">
+            <p className="text-xs font-medium uppercase tracking-wide text-[#9A9A8E]">
+              Para organizaciones
+            </p>
+            <h3 className="mt-2 text-xl font-semibold text-[#2B2B26]">Entidades aliadas</h3>
+            <p className="mt-3 flex-1 text-sm leading-relaxed text-[#6B6B60]">
+              Empresas, universidades y fundaciones que ponen recursos, conocimiento o
+              convocatoria. De forma visible con tu marca, o invisible si tu interés es
+              puramente social.
+            </p>
+            <Link
+              href="/aliados"
+              className="mt-6 inline-block self-start rounded-full border border-[#CFC9B8] px-6 py-2.5 text-sm font-medium text-[#4A4A42] transition hover:bg-[#EDEADF]"
+            >
+              Quiero aliarme
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -267,7 +265,8 @@ export default async function LandingPage() {
           <nav className="flex gap-5">
             <Link href="/causas" className="transition hover:text-[#40573F]">Causas</Link>
             <Link href="/#colaborar" className="transition hover:text-[#40573F]">Colaborar</Link>
-            <Link href="/#expertos" className="transition hover:text-[#40573F]">Expertos</Link>
+            <Link href="/expertos" className="transition hover:text-[#40573F]">Expertos</Link>
+            <Link href="/aliados" className="transition hover:text-[#40573F]">Aliados</Link>
             <Link href="/#nosotros" className="transition hover:text-[#40573F]">Nosotros</Link>
           </nav>
         </div>
