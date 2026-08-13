@@ -2,7 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
+import { rutaPanelPara } from "@/lib/roles";
 
 export async function signUp(formData: FormData) {
   const email = String(formData.get("email"));
@@ -21,7 +23,7 @@ export async function signUp(formData: FormData) {
     redirect(`/registro?error=${encodeURIComponent(error.message)}`);
   }
 
-  redirect("/dashboard");
+  redirect(rutaPanelPara(rol));
 }
 
 export async function signIn(formData: FormData) {
@@ -29,19 +31,104 @@ export async function signIn(formData: FormData) {
   const password = String(formData.get("password"));
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
     redirect(`/login?error=${encodeURIComponent(error.message)}`);
   }
 
-  redirect("/");
+  const { data: perfil } = await supabase
+    .from("profiles")
+    .select("rol")
+    .eq("id", data.user.id)
+    .single();
+
+  redirect(rutaPanelPara(perfil?.rol));
 }
 
 export async function signOut() {
   const supabase = await createClient();
   await supabase.auth.signOut();
   redirect("/");
+}
+
+// --- Recuperación de contraseña ---
+//
+// Flujo:
+// 1. El usuario pide un enlace en /recuperar -> requestPasswordReset envía el correo
+//    con un link que apunta a /actualizar-clave.
+// 2. Supabase autentica al usuario automáticamente (sesión de recuperación) cuando
+//    abre ese enlace.
+// 3. En /actualizar-clave, updatePassword usa esa sesión para fijar la nueva clave.
+export async function requestPasswordReset(formData: FormData) {
+  const email = String(formData.get("email"));
+
+  const origin = (await headers()).get("origin");
+  const supabase = await createClient();
+
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${origin}/actualizar-clave`,
+  });
+
+  // No revelamos si el correo existe o no: siempre mostramos el mismo mensaje,
+  // salvo un error real de configuración/envío.
+  if (error) {
+    redirect(`/recuperar?error=${encodeURIComponent(error.message)}`);
+  }
+
+  redirect("/recuperar?ok=1");
+}
+
+export async function updatePassword(formData: FormData) {
+  const password = String(formData.get("password"));
+  const confirmar = String(formData.get("confirmar"));
+
+  if (password !== confirmar) {
+    redirect(`/actualizar-clave?error=${encodeURIComponent("Las contraseñas no coinciden.")}`);
+  }
+
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect(
+      `/actualizar-clave?error=${encodeURIComponent(
+        "El enlace expiró o no es válido. Solicita uno nuevo."
+      )}`
+    );
+  }
+
+  const { error } = await supabase.auth.updateUser({ password });
+
+  if (error) {
+    redirect(`/actualizar-clave?error=${encodeURIComponent(error.message)}`);
+  }
+
+  await supabase.auth.signOut();
+  redirect("/login?reset=1");
+}
+
+// --- Administración de roles ---
+export async function updateUserRole(userId: string, formData: FormData) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { data: perfilActual } = await supabase
+    .from("profiles")
+    .select("rol")
+    .eq("id", user.id)
+    .single();
+
+  if (!perfilActual || perfilActual.rol !== "admin") {
+    redirect("/");
+  }
+
+  const rol = String(formData.get("rol"));
+
+  await supabase.from("profiles").update({ rol }).eq("id", userId);
+
+  revalidatePath("/panel-admin");
 }
 
 export async function createCause(formData: FormData) {
