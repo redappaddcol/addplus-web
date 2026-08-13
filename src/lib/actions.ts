@@ -67,7 +67,35 @@ export async function createCause(formData: FormData) {
     redirect(`/causas/nueva?error=${encodeURIComponent(error.message)}`);
   }
 
+  const { data: nueva } = await supabase
+    .from("causes")
+    .select("id, titulo, ciudad")
+    .eq("gestor_id", user.id)
+    .order("creado_en", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (nueva) {
+    const propuesta = new Date();
+    propuesta.setDate(propuesta.getDate() + 10);
+    propuesta.setHours(18, 0, 0, 0);
+
+    await supabase.from("events").insert({
+      cause_id: nueva.id,
+      gestor_id: user.id,
+      titulo: `Sesion abierta: ${nueva.titulo}`,
+      descripcion:
+        "Sesion para explicar la causa: que problema ataca, en que va y como sumarse. Edita este texto y publica el evento en Luma para abrir inscripciones.",
+      modalidad: "virtual",
+      ciudad: nueva.ciudad,
+      inicia_en: propuesta.toISOString(),
+      duracion_min: 60,
+      estado: "por_agendar",
+    });
+  }
+
   revalidatePath("/");
+  revalidatePath("/eventos");
   redirect("/dashboard");
 }
 
@@ -117,4 +145,68 @@ export async function closeCause(causeId: string) {
     .eq("gestor_id", user.id);
 
   revalidatePath("/dashboard");
+}
+
+export async function createEvent(formData: FormData) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const modalidad = String(formData.get("modalidad") || "virtual");
+  const fecha = String(formData.get("fecha"));
+  const hora = String(formData.get("hora") || "18:00");
+  const lumaUrl = String(formData.get("luma_url") || "").trim();
+
+  const { error } = await supabase.from("events").insert({
+    cause_id: String(formData.get("cause_id")),
+    gestor_id: user.id,
+    titulo: String(formData.get("titulo")),
+    descripcion: String(formData.get("descripcion") || ""),
+    modalidad,
+    lugar: modalidad === "presencial" ? String(formData.get("lugar") || "") : null,
+    ciudad: String(formData.get("ciudad") || ""),
+    luma_url: lumaUrl || null,
+    inicia_en: new Date(`${fecha}T${hora}`).toISOString(),
+    duracion_min: Number(formData.get("duracion_min")) || 60,
+    estado: lumaUrl ? "publicado" : "por_agendar",
+  });
+
+  if (error) {
+    redirect(`/eventos/nuevo?error=${encodeURIComponent(error.message)}`);
+  }
+
+  revalidatePath("/eventos");
+  redirect("/eventos");
+}
+
+export async function vincularLuma(eventId: string, formData: FormData) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const url = String(formData.get("luma_url") || "").trim();
+  if (!url) redirect(`/eventos/${eventId}`);
+
+  await supabase
+    .from("events")
+    .update({ luma_url: url, estado: "publicado" })
+    .eq("id", eventId)
+    .eq("gestor_id", user.id);
+
+  revalidatePath(`/eventos/${eventId}`);
+  redirect(`/eventos/${eventId}?ok=1`);
+}
+
+export async function cancelEvent(eventId: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  await supabase
+    .from("events")
+    .update({ estado: "cancelado" })
+    .eq("id", eventId)
+    .eq("gestor_id", user.id);
+
+  revalidatePath(`/eventos/${eventId}`);
 }
