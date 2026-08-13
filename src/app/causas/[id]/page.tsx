@@ -1,6 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { applyToCause } from "@/lib/actions";
 import { notFound } from "next/navigation";
+import Link from "next/link";
+import EventCard from "@/components/EventCard";
 
 export default async function CauseDetailPage({
   params,
@@ -33,6 +35,15 @@ export default async function CauseDetailPage({
       .maybeSingle();
     yaPostulado = !!existing;
   }
+
+  const { data: eventos } = await supabase
+    .from("events")
+    .select("*, causes(id, titulo)")
+    .eq("cause_id", id)
+    .neq("estado", "cancelado")
+    .order("inicia_en", { ascending: true });
+
+  const esGestorDeLaCausa = !!user && user.id === cause.gestor_id;
 
   const applyAction = applyToCause.bind(null, id);
 
@@ -105,6 +116,32 @@ export default async function CauseDetailPage({
           </form>
         )}
       </div>
+
+      <section className="mt-10">
+        <div className="mb-4 flex items-end justify-between">
+          <h2 className="text-lg font-semibold">Eventos de esta causa</h2>
+          {esGestorDeLaCausa && (
+            <Link
+              href={`/eventos/nuevo?causa=${id}`}
+              className="text-sm text-[#40573F] underline"
+            >
+              + Agendar evento
+            </Link>
+          )}
+        </div>
+
+        {eventos && eventos.length > 0 ? (
+          <div className="grid gap-4 sm:grid-cols-2">
+            {eventos.map((e: any) => (
+              <EventCard key={e.id} evento={e} />
+            ))}
+          </div>
+        ) : (
+          <p className="rounded-xl border border-dashed border-[#CFC9B8] p-6 text-center text-sm text-[#6B6B60]">
+            Todavía no hay eventos agendados para esta causa.
+          </p>
+        )}
+      </section>
     </div>
   );
 }
