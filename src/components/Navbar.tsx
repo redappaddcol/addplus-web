@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/lib/actions";
+import { rutaPanelPara } from "@/lib/roles";
 import Logo from "@/components/Logo";
 
 export default async function Navbar() {
@@ -44,12 +45,17 @@ export default async function Navbar() {
                   Crear causa
                 </Link>
               )}
-              <Link href="/dashboard" className="hidden text-[#4A4A42] transition hover:text-[#40573F] sm:block">
+              <Link
+                href={rutaPanelPara(perfil?.rol)}
+                className="hidden text-[#4A4A42] transition hover:text-[#40573F] sm:block"
+              >
                 Mi panel
               </Link>
-              <Link href="/mis-postulaciones" className="hidden text-[#4A4A42] transition hover:text-[#40573F] lg:block">
-                Mis postulaciones
-              </Link>
+              {perfil?.rol !== "admin" && (
+                <Link href="/mis-postulaciones" className="hidden text-[#4A4A42] transition hover:text-[#40573F] lg:block">
+                  Mis postulaciones
+                </Link>
+              )}
               <span className="hidden text-[#9A9A8E] lg:block">{perfil?.nombre}</span>
               <form action={signOut}>
                 <button className="rounded-full border border-[#CFC9B8] px-4 py-2 text-[#4A4A42] transition hover:bg-[#EDEADF]">
