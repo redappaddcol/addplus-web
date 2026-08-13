@@ -86,25 +86,6 @@ export default async function LandingPage() {
               </Link>
             </div>
           </div>
-
-          <div className="mt-12 max-w-md rounded-2xl border border-white/20 bg-[#F7F5EE]/95 p-5 backdrop-blur lg:absolute lg:right-5 lg:top-28 lg:mt-0">
-            <p className="mb-4 text-sm font-medium text-[#40573F]">Nuestra metodología</p>
-            <div className="grid grid-cols-3 gap-3">
-              {metodologia.map((m) => (
-                <div key={m.titulo} className="text-center">
-                  <div
-                    className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl text-base font-semibold"
-                    style={{ background: m.fondo, color: m.color }}
-                  >
-                    {m.titulo.charAt(0)}
-                  </div>
-                  <p className="mt-2 text-[11px] font-medium uppercase tracking-wide text-[#4A4A42]">
-                    {m.titulo}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
       </section>
 
