@@ -29,6 +29,7 @@ export default async function Navbar() {
 
         <nav className="hidden items-center gap-6 text-sm text-[#4A4A42] md:flex">
           <Link href="/causas" className="transition hover:text-[#40573F]">Causas</Link>
+          <Link href="/eventos" className="transition hover:text-[#40573F]">Eventos</Link>
           <Link href="/#colaborar" className="transition hover:text-[#40573F]">Colaborar</Link>
           <Link href="/#expertos" className="transition hover:text-[#40573F]">Expertos</Link>
           <Link href="/#nosotros" className="transition hover:text-[#40573F]">Nosotros</Link>
