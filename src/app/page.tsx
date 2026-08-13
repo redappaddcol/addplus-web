@@ -33,7 +33,7 @@ const causasHistoricas = [
 export default async function LandingPage() {
   const supabase = await createClient();
 
-  const { data: causas } = await supabase
+  const { data: causas, error } = await supabase
     .from("causes")
     .select(
       "id, titulo, descripcion, ciudad, estado, tiene_meta_economica, voluntarios_requeridos, imagen_url, categories(nombre), applications(estado)"
@@ -41,6 +41,10 @@ export default async function LandingPage() {
     .eq("estado", "activa")
     .order("creado_en", { ascending: false })
     .limit(3);
+
+  if (error) {
+    console.error("Error cargando causas:", error);
+  }
 
   const hayCausas = !!causas && causas.length > 0;
 
@@ -88,7 +92,6 @@ export default async function LandingPage() {
           </div>
         </div>
       </section>
-
       <section className="relative z-10 mx-auto -mt-28 max-w-6xl px-5">
         <div>
           <div className="rounded-2xl border border-[#E3DFD2] bg-white p-6 shadow-sm">
@@ -164,7 +167,6 @@ export default async function LandingPage() {
           </div>
         </div>
       </section>
-
       <section id="nosotros" className="scroll-mt-20 px-5 py-20">
         <div className="mx-auto max-w-4xl">
           <p className="text-sm font-medium uppercase tracking-wider text-[#7B8B6F]">Nosotros</p>
@@ -215,7 +217,6 @@ export default async function LandingPage() {
           </div>
         </div>
       </section>
-
       <section className="px-5 py-20">
         <div className="mx-auto max-w-3xl rounded-3xl bg-[#2E3A29] px-8 py-14 text-center">
           <h2 className="text-3xl font-semibold text-white">Súmate con el +</h2>
