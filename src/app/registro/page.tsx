@@ -1,4 +1,5 @@
 import { signUp } from "@/lib/actions";
+import { ROLES_PUBLICOS } from "@/lib/roles";
 
 export default async function RegistroPage({
   searchParams,
@@ -29,8 +30,11 @@ export default async function RegistroPage({
         <div>
           <label className="block text-sm font-medium">Quiero registrarme como</label>
           <select name="rol" className="mt-1 w-full rounded border border-neutral-300 p-2">
-            <option value="voluntario">Voluntario</option>
-            <option value="gestor">Gestor / creador de causas</option>
+            {ROLES_PUBLICOS.map((rol) => (
+              <option key={rol.value} value={rol.value}>
+                {rol.label}
+              </option>
+            ))}
           </select>
         </div>
         <button className="w-full rounded bg-orange-600 px-4 py-2 font-medium text-white hover:bg-orange-700">
